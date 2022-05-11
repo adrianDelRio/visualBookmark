@@ -1,0 +1,20 @@
+body {
+    background-color: #5865F2;
+    color: white;
+}
+
+h1, h2, h3, form {
+    text-align: center;
+}
+
+p {
+    text-align: center;
+    font-weight: bold;
+
+    /* Simula caja imagen */
+    background-color: grey;
+    border: 5px solid cyan;
+    padding: 80px;
+    margin-left: 30%;
+    margin-right: 30%;
+}
