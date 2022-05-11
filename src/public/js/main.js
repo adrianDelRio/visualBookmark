@@ -8,9 +8,9 @@ function handleSubmit(event) {
     console.log({ value });
 
     var show = document.getElementById("muestraDatos");
-    show.innerHTML = "";
     for (i = 0; i < 5; i++) {
-        show.innerHTML += "El titulo " + i + " es: " + value.title + "<br/>";
+        show.innerHTML += "<p id='datosSimulados'>El titulo " + i + " es: " + value.title + "<br/>"
+        + "La URL " + i + " es: " + value.url + "<br/><p>";
     }
 }
 

@@ -3,14 +3,13 @@ body {
     color: white;
 }
 
-h1, h2, h3, form {
+h1, h2, h3, h4, form {
     text-align: center;
 }
 
-p {
+#datosSimulados {
     text-align: center;
     font-weight: bold;
-
     /* Simula caja imagen */
     background-color: grey;
     border: 5px solid cyan;
