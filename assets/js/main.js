@@ -4,9 +4,14 @@ function handleSubmit(event) {
     const value = Object.fromEntries(data.entries());
     value.topics = data.getAll("topics");
 
-    // Mostramos los datos
+    // Mostramos los datos (simulando varios)
     console.log({ value });
-    document.getElementById("muestraDatos").innerHTML = "El titulo es: " + value.title;
+
+    var show = document.getElementById("muestraDatos");
+    show.innerHTML = "";
+    for (i = 0; i < 5; i++) {
+        show.innerHTML += "El titulo " + i + " es: " + value.title + "<br/>";
+    }
 }
 
 const form = document.querySelector("form");
