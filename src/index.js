@@ -1,13 +1,9 @@
 const express = require("express");
 const app = express();
 const path = require("path");
-const morgan = require("morgan");
 
 // settings
 app.set("port", 3000);
-
-// middlewares
-app.use(morgan("dev"));
 
 // routes
 app.get('/', (req, res) => {
