@@ -1,19 +1,57 @@
 body {
-    background-color: #5865F2;
+    background-color: darkblue;
     color: white;
 }
 
-h1, h2, h3, h4, form {
-    text-align: center;
-}
-
+/* Simulación caja imagen */
 #datosSimulados {
     text-align: center;
     font-weight: bold;
-    /* Simula caja imagen */
-    background-color: grey;
-    border: 5px solid cyan;
+    background-color: gray;
+    border: 5px solid blue;
+    color: white;
     padding: 80px;
     margin-left: 30%;
     margin-right: 30%;
+}
+
+/* Formulario */
+* {
+    box-sizing: border-box;
+}
+.container {
+    max-width: 500px;
+    margin: 60px auto;
+}
+.container h1 {
+    text-align: center;
+    color: white;
+}
+form {
+    background-color: white;
+    padding: 30px;
+}
+form .input-group {
+    margin-bottom: 15px;
+    color: darkblue;
+    font-weight: bold;
+}
+form label {
+    display: block;
+    margin-bottom: 10px;
+}
+form input {
+    padding: 12px 20px;
+    width: 100%;
+    border: 1px solid #ccc;
+}
+.submit-btn {
+    width: 100%;
+    border: none;
+    background: darkblue;
+    font-size: 18px;
+    color: white;
+    border-radius: 3px;
+    padding: 20px;
+    text-align: center;
 }

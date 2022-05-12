@@ -10,24 +10,31 @@
 </head>
 <body>
 
-    <h1>Visual Bookmark</h1>
-    <h2>Programa de marcadores visuales para la web</h2>
+    <div style="text-align: center;">
+        <h1>Visual Bookmark</h1>
+        <h2>Programa de marcadores visuales para la web</h2>
+    </div>
 
     <div id="muestraDatos"></div>
 
-    <h3>Añadir nuevo marcador</h3>
-    <form>
-        <label for="title">Titulo</label>
-        <input type="text" name="title" id="title" />
-
-        <label for="url">URL</label>
-        <input type="url" name="url" id="url" />
-
-        <label for="image">Imagen</label>
-        <input type="file" name="image" id="image" />
-    
-        <button type="submit">Enviar</button>
-    </form>
+    <div class="container">
+        <h1>Añadir nuevo marcador</h1>
+        <form id='form'>
+            <div class="input-group">
+                <label for='title'>Titulo:</label>
+                <input type="text" name='title' id='title' placeholder="¿Cual es el titulo?" />
+            </div>
+            <div class="input-group">
+                <label for='url'>URL:</label>
+                <input type="url" name='url' id='url' placeholder="¿Cual es la URL?" />
+            </div>
+            <div class="input-group">
+                <label for='image'>Seleciona imagen:</label>
+                <input type="file" name='image' id='image'>
+            </div>
+            <button class="submit-btn" type='submit'>Enviar</button>
+        </form>
+    </div>
 
     <script src='/js/main.js'></script>
 
