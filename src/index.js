@@ -15,10 +15,10 @@ app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, "views/index.html"));
 });
 
-app.post("/upload_bookmark", upload.single("image"), uploadBookmark);
+app.post("/upload_bookmark", upload.single("files"), uploadBookmark);
 function uploadBookmark(req, res) {
     console.log(req.body);
-    console.log(req.image);
+    console.log(req.file);
     res.json({ message: "Successfully uploaded files" });
 }
 
