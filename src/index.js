@@ -1,6 +1,11 @@
 const express = require("express");
 const app = express();
 const path = require("path");
+const multer = require("multer");
+const upload = multer({ dest: "bookmarks/" });
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // settings
 app.set("port", 3000);
@@ -9,6 +14,13 @@ app.set("port", 3000);
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, "views/index.html"));
 });
+
+app.post("/upload_bookmark", upload.single("image"), uploadBookmark);
+function uploadBookmark(req, res) {
+    console.log(req.body);
+    console.log(req.image);
+    res.json({ message: "Successfully uploaded files" });
+}
 
 // static files
 app.use(express.static(path.join(__dirname, "public")));

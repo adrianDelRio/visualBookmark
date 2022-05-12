@@ -13,9 +13,9 @@ function submitForm(e) {
     fetch("http://127.0.0.1:3000/upload_bookmark", {
         method: 'POST',
         body: formData,
-        headers: {
+        /*headers: {
           "Content-Type": "multipart/form-data"
-        }
+        }*/
     })
         .then((res) => console.log(res))
         .catch((err) => ("Error occured", err));
