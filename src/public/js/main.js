@@ -9,7 +9,7 @@ function submitForm(e) {
     const formData = new FormData();
     formData.append("title", title.value);
     formData.append("url", url.value);
-    for(let i =0; i < files.files.length; i++) {
+    for(let i = 0; i < files.files.length; i++) {
       formData.append("files", files.files[0]);
     }
     fetch("http://127.0.0.1:3000/upload_bookmark", {
