@@ -7,8 +7,9 @@ const multer = require("multer");
 const fs = require('fs');
 
 
-// settings
+// settings and constants
 app.set("port", 3000);
+const bookmarksFile = 'src/public/bookmarks/bookmarks.json'
 
 // middleware
 app.use(express.json());
@@ -22,7 +23,17 @@ const multerStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
     const ext = file.mimetype.split("/")[1];
-    cb(null, `bookmarks/${file.fieldname}-${Date.now()}.${ext}`);
+
+    // Si el archivo no existe
+    // se inicializa con nuestra configuracion
+    if (!fs.existsSync(bookmarksFile)) {
+      var newNumBookmarks = '{ "numBookmarks": 0 }';
+      fs.writeFileSync(bookmarksFile, newNumBookmarks);
+    }
+    var jsonBookmarks = fs.readFileSync(bookmarksFile)
+    var objBookmarks = JSON.parse(jsonBookmarks);
+    
+    cb(null, `bookmarks/${objBookmarks["numBookmarks"]}.${ext}`);
   },
 });
 
@@ -33,7 +44,7 @@ const multerFilter = (req, file, cb) => {
   if (ext === "png" | ext == "jpeg" | ext == "webp") {
     cb(null, true);
   } else {
-    cb(new Error("Not a png/jpg File!!"), false);
+    cb(new Error("Not a png/jpg/webp File!!"), false);
   }
 };
 
@@ -45,7 +56,7 @@ const upload = multer({
 
 // routes
 app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
-  /* Prueba datos formulario */
+  /* Prueba datos (objetos) formulario */
   //console.log(req.body);
   //console.log(req.file);
 
@@ -55,17 +66,13 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
   //console.log(jsonPrototipo);
   //console.log(jsonPrototipo["numBookmarks"]);
 
-  const bookmarksFile = 'src/public/bookmarks/bookmarks.json'
-  // Si el archivo no existe
-  // se inicializa con nuestra configuracion
-  if (!fs.existsSync(bookmarksFile)) {
-    var newNumBookmarks = '{ "numBookmarks": 0 }';
-    fs.writeFileSync(bookmarksFile, newNumBookmarks);
-  }
-
-  // Se anhade el nuevo marcador
+  // Bookmarks se ha construido al realizar la subida del archivo
   var jsonBookmarks = fs.readFileSync(bookmarksFile)
   var objBookmarks = JSON.parse(jsonBookmarks);
+  // Se anhade la imagen con su extension al marcador
+  const ext = req.file.mimetype.split("/")[1];
+  req.body["image"] = objBookmarks["numBookmarks"] + "." + ext;
+  // Se anhade el nuevo marcador
   objBookmarks[objBookmarks["numBookmarks"]] = req.body;
   objBookmarks["numBookmarks"]++;
   var newBookmarks = JSON.stringify(objBookmarks, null, 2);
