@@ -4,6 +4,8 @@ const bodyParser = require("body-parser");
 const app = express();
 const path = require("path");
 const multer = require("multer");
+const fs = require('fs');
+
 
 // settings
 app.set("port", 3000);
@@ -43,8 +45,32 @@ const upload = multer({
 
 // routes
 app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
+  /* Prueba datos formulario */
   //console.log(req.body);
   //console.log(req.file);
+
+  /* Objetivo */
+  //let prototipo = fs.readFileSync('src/public/bookmarks/prototipo.json');
+  //let jsonPrototipo = JSON.parse(prototipo);
+  //console.log(jsonPrototipo);
+  //console.log(jsonPrototipo["numBookmarks"]);
+
+  const bookmarksFile = 'src/public/bookmarks/bookmarks.json'
+  // Si el archivo no existe
+  // se inicializa con nuestra configuracion
+  if (!fs.existsSync(bookmarksFile)) {
+    var newNumBookmarks = '{ "numBookmarks": 0 }';
+    fs.writeFileSync(bookmarksFile, newNumBookmarks);
+  }
+
+  // Se anhade el nuevo marcador
+  var jsonBookmarks = fs.readFileSync(bookmarksFile)
+  var objBookmarks = JSON.parse(jsonBookmarks);
+  objBookmarks[objBookmarks["numBookmarks"]] = req.body;
+  objBookmarks["numBookmarks"]++;
+  var newBookmarks = JSON.stringify(objBookmarks, null, 2);
+  fs.writeFileSync('src/public/bookmarks/bookmarks.json', newBookmarks);
+
   res.json({ message: "Successfully uploaded files" });
 });
 
