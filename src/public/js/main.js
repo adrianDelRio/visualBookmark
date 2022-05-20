@@ -1,6 +1,9 @@
 const form = document.getElementById("form");
 form.addEventListener("submit", submitForm);
 
+var numBookmarksLoaded = 0;
+window.addEventListener('load', loadBookmarks);
+
 function submitForm(e) {
     e.preventDefault();
     const title = document.getElementById("title");
@@ -16,9 +19,31 @@ function submitForm(e) {
         method: 'POST',
         body: formData,
     })
-        .then((res) => {
-          loadBookmarks();
-          console.log(res)
-        })
-        .catch((err) => ("Error occured", err));
+    .then(res => {
+      console.log(res);
+    })
+    .then(reloadBookmarks => {
+      loadBookmarks();
+    })
+    .catch((err) => ("Error occured", err));
+
+    ;
+}
+
+function loadBookmarks() {
+  fetch("../bookmarks/bookmarks.json")
+  .then(response => {
+      return response.json();
+   })
+  .then(objBookmarks => {
+      var show = document.getElementById("muestraDatos");
+      while (numBookmarksLoaded < objBookmarks["numBookmarks"]) {
+        show.innerHTML += "<p id='datosSimulados'>El titulo " + numBookmarksLoaded + " es: " +
+        objBookmarks[numBookmarksLoaded].title + "<br/>" +
+        "La URL " + numBookmarksLoaded + " es: " + 
+        objBookmarks[numBookmarksLoaded].url + "<br/><p>";
+        numBookmarksLoaded++
+      }
+  })
+  .catch((err) => ("Error occured", err));
 }

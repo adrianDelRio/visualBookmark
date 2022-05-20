@@ -1,4 +1,6 @@
-window.onload = function loadBookmarks() {
+window.addEventListener('load', loadBookmarks)
+
+function loadBookmarks() {
     fetch("../bookmarks/bookmarks.json")
     .then(response => {
         return response.json();
