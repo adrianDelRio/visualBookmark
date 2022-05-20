@@ -16,6 +16,9 @@ function submitForm(e) {
         method: 'POST',
         body: formData,
     })
-        .then((res) => console.log(res))
+        .then((res) => {
+          loadBookmarks();
+          console.log(res)
+        })
         .catch((err) => ("Error occured", err));
 }
