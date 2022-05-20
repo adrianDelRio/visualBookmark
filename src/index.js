@@ -55,6 +55,7 @@ const upload = multer({
 });
 
 // routes
+// si no se sube ningun archivo multer no guarda nada ni genera excepciones
 app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
   /* Prueba datos (objetos) formulario */
   //console.log(req.body);
@@ -69,9 +70,14 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
   // Bookmarks se ha construido al realizar la subida del archivo
   var jsonBookmarks = fs.readFileSync(bookmarksFile)
   var objBookmarks = JSON.parse(jsonBookmarks);
-  // Se anhade la imagen con su extension al marcador
-  const ext = req.file.mimetype.split("/")[1];
-  req.body["image"] = objBookmarks["numBookmarks"] + "." + ext;
+  try {
+    // Se anhade la imagen con su extension al marcador
+    const ext = req.file.mimetype.split("/")[1];
+    req.body["image"] = objBookmarks["numBookmarks"] + "." + ext;
+  } catch (e) {
+    // Se anhade la imagen POR DEFECTO con su extension al marcador
+    req.body["image"] = "default.jpg";
+  }
   // Se anhade el nuevo marcador
   objBookmarks[objBookmarks["numBookmarks"]] = req.body;
   objBookmarks["numBookmarks"]++;

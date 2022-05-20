@@ -4,7 +4,7 @@ form.addEventListener("submit", submitForm);
 var numBookmarksLoaded = 0;
 window.addEventListener('load', loadBookmarks);
 
-function submitForm(e) {
+async function submitForm(e) {
     e.preventDefault();
     const title = document.getElementById("title");
     const url = document.getElementById("url");
@@ -15,19 +15,16 @@ function submitForm(e) {
     for(let i = 0; i < files.files.length; i++) {
       formData.append("files", files.files[0]);
     }
-    fetch("http://127.0.0.1:3000/upload_bookmark", {
+    // TODO: Posible carrera critica con el backend. Solucion: ¿Mutex/Barreras?
+    await fetch("http://127.0.0.1:3000/upload_bookmark", {
         method: 'POST',
         body: formData,
     })
     .then(res => {
       console.log(res);
-    })
-    .then(reloadBookmarks => {
       loadBookmarks();
     })
     .catch((err) => ("Error occured", err));
-
-    ;
 }
 
 function loadBookmarks() {
@@ -38,10 +35,10 @@ function loadBookmarks() {
   .then(objBookmarks => {
       var show = document.getElementById("muestraDatos");
       while (numBookmarksLoaded < objBookmarks["numBookmarks"]) {
-        show.innerHTML += "<p id='datosSimulados'>El titulo " + numBookmarksLoaded + " es: " +
-        objBookmarks[numBookmarksLoaded].title + "<br/>" +
-        "La URL " + numBookmarksLoaded + " es: " + 
-        objBookmarks[numBookmarksLoaded].url + "<br/><p>";
+        show.innerHTML += "<a href='" + objBookmarks[numBookmarksLoaded].url + "' target='_blank'>" +
+        "<image id='bookmark' src='../bookmarks/" + objBookmarks[numBookmarksLoaded].image + "'" +
+        " alt='Requires default.jpg' title='" + objBookmarks[numBookmarksLoaded].title + "'>" +
+        "</a>"
         numBookmarksLoaded++
       }
   })

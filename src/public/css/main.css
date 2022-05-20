@@ -4,15 +4,11 @@ body {
 }
 
 /* Simulación caja imagen */
-#datosSimulados {
-    text-align: center;
-    font-weight: bold;
-    background-color: gray;
+#bookmark {
     border: 5px solid blue;
-    color: white;
-    padding: 80px;
-    margin-left: 30%;
-    margin-right: 30%;
+    width: 100%;
+    max-width: 25%;
+    height: auto;
 }
 
 /* Formulario */
