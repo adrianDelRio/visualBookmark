@@ -21,6 +21,12 @@ Instalamos dependendcias
 npm install
 ```
 
+*Importante*: Renombramos la carpeta "defaultData" por "bookmarks" antes de ejecutar el programa para ajustar los arhivos de configuracion del mismo
+
+```
+mv src/public/defaultData/ src/public/bookmarks/
+```
+
 Finalmente ejecutamos el proyecto
 
 ```
