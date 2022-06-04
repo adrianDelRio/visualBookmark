@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Visual Bookmark</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <meta name="author" content='adrianDelRio'>
+    <link rel='stylesheet' type='text/css' media='screen' href='./css/main.css'>
+</head>
+<body>
+
+    <div style="text-align: center;">
+        <h1>Visual Bookmark</h1>
+        <h2>Programa de marcadores visuales para la web</h2>
+    </div>
+
+    <div id="muestraDatos"></div>
+
+    <div class="container">
+        <h1>Añadir nuevo marcador</h1>
+        <form id='form'>
+            <div class="input-group">
+                <label for='title'>Titulo:</label>
+                <input type="text" name='title' id='title' placeholder="¿Cual es el titulo?" value="Prueba"/>
+            </div>
+            <div class="input-group">
+                <label for='url'>URL:</label>
+                <input type="url" name='url' id='url' placeholder="¿Cual es la URL?" value="https://prueba.com"/>
+            </div>
+            <div class="input-group">
+                <label for='files'>Seleciona una imagen:</label>
+                <input type="file" name='files' id='files' accept="image/*">
+            </div>
+            <button class="submit-btn" type='submit'>Enviar</button>
+        </form>
+    </div>
+
+    <script type="module" src='./js/main.js'></script>
+
+</body>
+</html>

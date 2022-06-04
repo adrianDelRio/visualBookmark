@@ -1,10 +1,10 @@
-const form = document.getElementById("form");
-form.addEventListener("submit", submitForm);
+const submitedBookmark = document.getElementById("modBookmark");
+submitedBookmark.addEventListener("submit", modBookmark);
 
 var numBookmarksLoaded = 0;
 window.addEventListener('load', loadBookmarks);
 
-async function submitForm(e) {
+async function modBookmark(e) {
     e.preventDefault();
     const title = document.getElementById("title");
     const url = document.getElementById("url");
@@ -21,6 +21,21 @@ async function submitForm(e) {
     })
     .then(res => {
       console.log(res);
+      var response = document.getElementById("modBookmark-response");
+      if (res.status == 200) {
+        response.innerHTML += 
+      '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+        '¡El marcador ha sido añadido correctamente!' +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+      '</div>';
+      } else {
+        response.innerHTML += 
+      '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
+        'Algo ha ido mal.. Revisa la consola para más información' +
+        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+      '</div>';
+      }
+      
       loadBookmarks();
     })
     .catch((err) => ("Error occured", err));
@@ -35,17 +50,15 @@ function loadBookmarks() {
       var show = document.getElementById("showBookmarks");
       while (numBookmarksLoaded < objBookmarks["numBookmarks"]) {
         show.innerHTML += "<div class='col'>" +
-            "<div class='card shadow-sm'>" +
+            "<div class='card shadow-sm p-1 bg-secondary'>" +
                 "<a href='" + objBookmarks[numBookmarksLoaded].url + "' target='_blank'><image class='bd-placeholder-img card-img-top' width='100%' height='225' id='bookmark' src='../bookmarks/" + objBookmarks[numBookmarksLoaded].image + "'></a>" +
                 "<div class='card-body bg-dark'>" +
                     "<p class='card-text text-white'>" + objBookmarks[numBookmarksLoaded].title + "</p>" +
-                    "<div class='d-flex justify-content-between align-items-center'>" +
                     "<div class='btn-group'>" +
-                        "<button type='button' class='btn btn-sm btn-light'>Ver</button>" +
-                        "<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#addBookmark' data-bs-whatever='Titulo anterior'>Editar</button>" +
-                        "<button type='button' class='btn btn-sm btn-danger'>Eliminar</button>" +
-                    "</div>" +
-                        "<small class='text-white'>9 mins</small>" +
+                        "<a href='" + objBookmarks[numBookmarksLoaded].url + "' type='button' class='btn btn-sm btn-light'>Ver</a>" +
+                        // TODO: Editar y eliminar
+                        //"<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#modBookmark' data-bs-bookmark-id='" + numBookmarksLoaded + "'>Editar</button>" +
+                        //"<button type='button' class='btn btn-sm btn-danger'>Eliminar</button>" +
                     "</div>" +
                   "</div>" +
               "</div>" +
