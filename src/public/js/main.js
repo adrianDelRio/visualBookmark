@@ -15,7 +15,6 @@ async function submitForm(e) {
     for(let i = 0; i < files.files.length; i++) {
       formData.append("files", files.files[0]);
     }
-    // TODO: Posible carrera critica con el backend. Solucion: ¿Mutex/Barreras?
     await fetch("http://127.0.0.1:3000/upload_bookmark", {
         method: 'POST',
         body: formData,
@@ -33,12 +32,25 @@ function loadBookmarks() {
       return response.json();
    })
   .then(objBookmarks => {
-      var show = document.getElementById("muestraDatos");
+      var show = document.getElementById("showBookmarks");
       while (numBookmarksLoaded < objBookmarks["numBookmarks"]) {
-        show.innerHTML += "<a href='" + objBookmarks[numBookmarksLoaded].url + "' target='_blank'>" +
-        "<image id='bookmark' src='../bookmarks/" + objBookmarks[numBookmarksLoaded].image + "'" +
-        " alt='Requires default.jpg' title='" + objBookmarks[numBookmarksLoaded].title + "'>" +
-        "</a>"
+        show.innerHTML += "<div class='col'>" +
+            "<div class='card shadow-sm'>" +
+                "<a href='" + objBookmarks[numBookmarksLoaded].url + "' target='_blank'><image class='bd-placeholder-img card-img-top' width='100%' height='225' id='bookmark' src='../bookmarks/" + objBookmarks[numBookmarksLoaded].image + "'></a>" +
+                "<div class='card-body bg-dark'>" +
+                    "<p class='card-text text-white'>" + objBookmarks[numBookmarksLoaded].title + "</p>" +
+                    "<div class='d-flex justify-content-between align-items-center'>" +
+                    "<div class='btn-group'>" +
+                        "<button type='button' class='btn btn-sm btn-light'>Ver</button>" +
+                        "<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#addBookmark' data-bs-whatever='Titulo anterior'>Editar</button>" +
+                        "<button type='button' class='btn btn-sm btn-danger'>Eliminar</button>" +
+                    "</div>" +
+                        "<small class='text-white'>9 mins</small>" +
+                    "</div>" +
+                  "</div>" +
+              "</div>" +
+        "</div>"
+        
         numBookmarksLoaded++
       }
   })
