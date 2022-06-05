@@ -22,18 +22,39 @@ const multerStorage = multer.diskStorage({
     cb(null, "src/public");
   },
   filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
 
-    // Si el archivo no existe
+    // Si el archivo de datos no existe
     // se inicializa con nuestra configuracion
     if (!fs.existsSync(bookmarksFile)) {
       var newNumBookmarks = '{ "numBookmarks": 0 }';
       fs.writeFileSync(bookmarksFile, newNumBookmarks);
     }
+    // Leemos el archivo de datos
     var jsonBookmarks = fs.readFileSync(bookmarksFile)
     var objBookmarks = JSON.parse(jsonBookmarks);
-    
-    cb(null, `bookmarks/${objBookmarks["numBookmarks"]}.${ext}`);
+
+    // Si el marcador NO tiene ID VALIDO no lo aceptamos
+    // -1 es el identificador para los nuevos marcadores
+    // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
+    if (req.body.id == null | req.body.id == '' | req.body.id > objBookmarks["numBookmarks"]) {
+      cb(new Error("El marcador necesita un id valido"), false);
+    }
+
+    // Si es un nuevo marcador lo anhadimos
+    if (req.body.id == -1) {
+      // Guardamos el id para este marcador (segun la pila de marcadores)
+      var id = objBookmarks["numBookmarks"];
+    } else {  // Editamos un marcador existente
+      var id = req.body.id;
+      // Eliminamos la antigua imagen (ya que solo
+      // se entra a este metodo si hay una nueva imagen)
+      fs.unlinkSync("./src/public/bookmarks/" + objBookmarks[id].image);
+    }
+
+    // Guardamos nueva la imagen
+    var ext = file.mimetype.split("/")[1];
+    var imagen = id + '.' + ext;
+    cb(null, `bookmarks/${imagen}`);
   },
 });
 
@@ -44,7 +65,7 @@ const multerFilter = (req, file, cb) => {
   if (ext === "png" | ext == "jpeg" | ext == "webp") {
     cb(null, true);
   } else {
-    cb(new Error("Not a png/jpg/webp File!!"), false);
+    cb(new Error("No es un archivo png/jpg/webp"), false);
   }
 };
 
@@ -69,7 +90,7 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
   // -1 es el identificador para los nuevos marcadores
   // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
   if (req.body.id == null | req.body.id == '' | req.body.id > objBookmarks["numBookmarks"]) {
-    res.status(400).json({ error: 'El marcador necesita una id valido' });
+    res.status(400).json({ error: 'El marcador necesita un id valido' });
     return;
   }
 
@@ -97,30 +118,32 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
       // Se anhade la imagen POR DEFECTO al marcador
       req.body["image"] = "default.jpg";
     }
+
+    // Se anhade el marcador
+    objBookmarks[id] = req.body;
   } else {  // Editamos un marcador existente
     var id = req.body.id;
     // No queremos guardar el id dentro del objeto, asi que lo borramos
     delete req.body.id;
     // Como estamos editando un marcador, el id para el siguiente marcador ya esta ajustado
 
-    // // Si el marcador editado envia un titulo lo actualizamos
-    // if (req.body.title = null) {
-    //   req.body["titile"] = req.body.titile;
-    // }
-    // // Si el marcador editado envia una url la actualizamos
-    // if (req.body.url != null) {
-    //   req.body["url"] = req.body.url;
-    // }
+    // Si el marcador editado envia un titulo lo actualizamos
+    if (req.body.title != null) {
+      objBookmarks[id].title = req.body.title;
+    }
+    // Si el marcador editado envia una url la actualizamos
+    if (req.body.url != null) {
+      objBookmarks[id].url = req.body.url;
+    }
     // Si el marcador editado envia una imagen la actualizamos
     if (req.file != null) {
       // Se anhade la imagen con su extension al marcador
       const ext = req.file.mimetype.split("/")[1];
-      req.body["image"] = id + "." + ext;
+      objBookmarks[id].image = id + "." + ext;
     }
   }
 
-  // Se modifica el marcador
-  objBookmarks[id] = req.body;
+  // Se guarda el marcador modificado
   var newBookmarks = JSON.stringify(objBookmarks, null, 2);
   fs.writeFileSync('src/public/bookmarks/bookmarks.json', newBookmarks);
 
