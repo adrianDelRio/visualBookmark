@@ -125,12 +125,12 @@
     </div>
   </div>
 
-  <!-- Formulario popup -->
+  <!-- Formulario add/edit Bookmark modal -->
   <div class="modal fade" id="modBookmark" tabindex="-1" aria-labelledby="modBookmarkLabel" aria-hidden="true">
     <div class="modal-dialog">
       <div class="modal-content bg-dark">
         <div class="modal-header">
-          <h5 class="modal-title text-white" id="modBookmarkLabel">Añadir nuevo marcador</h5>
+          <h5 class="modal-title text-white" id="modBookmarkLabel">Modificar marcador</h5>
           <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -154,6 +154,25 @@
             </div>
             <input type="hidden" class="modal-bookmark-id" id="id" name="id">
           </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario confirmación eliminar Bookmark modal -->
+  <div class="modal fade" id="removeBookmark" tabindex="-1" aria-labelledby="removeBookmarkLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content bg-dark">
+        <div class="modal-header">
+          <h5 class="modal-title text-white" id="removeBookmarkLabel">Eliminar Bookmark</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-white">
+          ¿Seguro que quieres eliminar el Bookmark?
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Eliminar</button>
+        </div>
       </div>
     </div>
   </div>

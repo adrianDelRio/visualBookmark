@@ -7,6 +7,9 @@ window.addEventListener('load', loadBookmarks);
 const updateBookmark = document.getElementById('modBookmark')
 updateBookmark.addEventListener('show.bs.modal', visualEditOldBookmark);
 
+const deleteBookmark = document.getElementById('removeBookmark')
+deleteBookmark.addEventListener('show.bs.modal', visualRemoveBookmark);
+
 async function modBookmark(e) {
     e.preventDefault();
     const id = document.getElementById("id");
@@ -41,6 +44,8 @@ async function modBookmark(e) {
       '</div>';
       }
       // Actualizamos los marcadores mostrados
+      // cuando se edita un marcador puede estar en cualquier posicion,
+      // por lo que se recargan los marcadores en su totalidad
       numBookmarksLoaded = 0;
       var show = document.getElementById("showBookmarks");
       show.innerHTML = '';
@@ -65,10 +70,9 @@ function loadBookmarks() {
                     "<div class='d-flex justify-content-between align-items-center'>" +
                     "<div class='btn-group'>" +
                         "<a href='" + objBookmarks[numBookmarksLoaded].url + "' type='button' class='btn btn-sm btn-light'>Ver</a>" +
-                        // TODO: Editar y eliminar
-                        "<button id='editBookmark' type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#modBookmark' " +
+                        "<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#modBookmark' " +
                         "data-bs-bookmark-id='" + numBookmarksLoaded + "' data-bs-bookmark-title='" + objBookmarks[numBookmarksLoaded].title + "' data-bs-bookmark-url='" + objBookmarks[numBookmarksLoaded].url + "'>Editar</button>" +
-                        //"<button type='button' class='btn btn-sm btn-danger'>Eliminar</button>" +
+                        "<button type='button' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#removeBookmark' data-bs-bookmark-id='" + numBookmarksLoaded + "'>Eliminar</button>" +
                     "</div>" +
                   "<i class='card-text text-white'>#" + numBookmarksLoaded + "</i>" +
                 "</div>" +
@@ -113,4 +117,18 @@ function visualEditOldBookmark(e) {
     modalBookmarkId.value = id
     modalBookmarkNewImage.textContent = `Seleciona una nueva imagen:`
   }
+}
+
+// Para pasar los datos antiguos del marcador al eliminarlo
+function visualRemoveBookmark(e) {
+  const button = e.relatedTarget
+  // Obtengo la información de los atributos data-bs-*
+  const id = button.getAttribute('data-bs-bookmark-id')
+
+  // Seleccionamos los modals indicados
+  const modalTitle = deleteBookmark.querySelector('.modal-title')
+  const modalBookmarkId = deleteBookmark.querySelector('.modal-body')
+
+  modalTitle.textContent = `Eliminar Bookmark #${id}`
+  modalBookmarkId.textContent = `¿Seguro que quieres eliminar el Bookmark #${id}?`
 }
