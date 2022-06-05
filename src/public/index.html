@@ -137,11 +137,11 @@
           <form>
             <div class="mb-3">
               <label for="title" class="col-form-label text-white">Titulo:</label>
-              <input type="text" class="form-control" name="title" id="title" placeholder="¿Cual es el titulo?">
+              <input type="text" class="modal-bookmark-title form-control" name="title" id="title" placeholder="¿Cual es el titulo?">
             </div>
             <div class="mb-3">
               <label for="url" class="col-form-label text-white">URL:</label>
-              <input type="text" class="form-control" name="url" id="url" placeholder="¿Cual es la URL?">
+              <input type="text" class="modal-bookmark-url form-control" name="url" id="url" placeholder="¿Cual es la URL?">
             </div>
             <div class="mb-3">
               <label for="files" class="col-form-label text-white">Seleciona una imagen:</label>
@@ -170,26 +170,6 @@
 <script type="module" src='./js/main.js'></script>
 
 <script src="https://getbootstrap.com/docs/5.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2" crossorigin="anonymous"></script>
-
-<!-- Para pasar los datos al editar un marcador -->
-<!--<script>
-  const addBookmark = document.getElementById('addBookmark')
-  addBookmark.addEventListener('show.bs.modal', event => {
-    // Button that triggered the modal
-    const button = event.relatedTarget
-    // Extract info from data-bs-* attributes
-    const recipient = button.getAttribute('data-bs-bookmark-id')
-    // If necessary, you could initiate an AJAX request here
-    // and then do the updating in a callback.
-    //
-    // Update the modal's content.
-    const modalTitle = addBookmark.querySelector('.modal-title')
-    const modalBodyInput = addBookmark.querySelector('.modal-body input')
-  
-    modalTitle.textContent = `Editando${recipient}`
-    modalBodyInput.value = recipient
-  })
-</script>-->
 
 </body>
 </html>
