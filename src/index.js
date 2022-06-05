@@ -147,7 +147,35 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
   var newBookmarks = JSON.stringify(objBookmarks, null, 2);
   fs.writeFileSync('src/public/bookmarks/bookmarks.json', newBookmarks);
 
-  res.json({ message: "Marcador enviado satisfactoriamente" });
+  res.json({ message: "Marcador recibido satisfactoriamente" });
+});
+
+app.post("/delete_bookmark", async (req, res) => {
+  // Bookmarks se ha construido al realizar la subida del archivo
+  var jsonBookmarks = fs.readFileSync(bookmarksFile)
+  var objBookmarks = JSON.parse(jsonBookmarks);
+
+  // Si el marcador NO tiene ID VALIDO no lo aceptamos
+  // -1 es el identificador para los nuevos marcadores
+  // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
+  var id = req.body.id;
+  if (id == null | id == '' | id < 0 | id > objBookmarks["numBookmarks"]) {
+    res.status(400).json({ error: 'El marcador necesita un id valido' });
+    return;
+  }
+
+  // Eliminamos la imagen
+  fs.unlinkSync("./src/public/bookmarks/" + objBookmarks[id].image);
+  // Eliminamos el marcador
+  delete objBookmarks[id];
+  // Ajustamos el id para el siguiente marcador
+  objBookmarks["numBookmarks"]--;
+
+  // Se guarda el marcador modificado
+  var newBookmarks = JSON.stringify(objBookmarks, null, 2);
+  fs.writeFileSync('src/public/bookmarks/bookmarks.json', newBookmarks);
+
+  res.json({ message: "Marcador eliminado satisfactoriamente" });
 });
 
 // static files

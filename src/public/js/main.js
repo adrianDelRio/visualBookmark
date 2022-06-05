@@ -10,6 +10,9 @@ updateBookmark.addEventListener('show.bs.modal', visualEditOldBookmark);
 const deleteBookmark = document.getElementById('removeBookmark')
 deleteBookmark.addEventListener('show.bs.modal', visualRemoveBookmark);
 
+const upDeletedBookmark = document.getElementById('removeBookmark')
+upDeletedBookmark.addEventListener('submit', removeBookmark);
+
 async function modBookmark(e) {
     e.preventDefault();
     const id = document.getElementById("id");
@@ -33,7 +36,7 @@ async function modBookmark(e) {
       if (res.status == 200) {
         response.innerHTML += 
       '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-        '¡El marcador ha sido añadido correctamente!' +
+        '¡La <b>modificación</b> se ha realizado correctamente!' +
         '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
       '</div>';
       } else {
@@ -127,8 +130,48 @@ function visualRemoveBookmark(e) {
 
   // Seleccionamos los modals indicados
   const modalTitle = deleteBookmark.querySelector('.modal-title')
-  const modalBookmarkId = deleteBookmark.querySelector('.modal-body')
+  const modalBody = deleteBookmark.querySelector('.modal-body')
+  const modalBookmarkId = updateBookmark.querySelector('.modal-bookmark-id')
 
+  // Mostramos cambios sobre los modals
   modalTitle.textContent = `Eliminar Bookmark #${id}`
-  modalBookmarkId.textContent = `¿Seguro que quieres eliminar el Bookmark #${id}?`
+  modalBody.textContent = `¿Seguro que quieres eliminar el Bookmark #${id}?`
+  modalBookmarkId.value = id
+}
+
+async function removeBookmark(e) {
+  e.preventDefault();
+  const id = document.getElementById("id");
+  await fetch("http://127.0.0.1:3000/delete_bookmark", {
+      method: 'POST',
+      body: 'id=' + id.value,
+      headers: {
+        'Content-type': 'application/x-www-form-urlencoded'
+      }
+  })
+  .then(res => {
+    console.log(res);
+    var response = document.getElementById("modBookmark-response");
+    if (res.status == 200) {
+      response.innerHTML += 
+    '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+      '¡El marcador ha sido <b>eliminado</b> correctamente!' +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+    '</div>';
+    } else {
+      response.innerHTML += 
+    '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
+      'Algo ha ido mal.. Revisa la consola para más información' +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+    '</div>';
+    }
+    // Actualizamos los marcadores mostrados
+    // cuando se elimina un marcador puede estar en cualquier posicion,
+    // por lo que se recargan los marcadores en su totalidad
+    numBookmarksLoaded = 0;
+    var show = document.getElementById("showBookmarks");
+    show.innerHTML = '';
+    loadBookmarks();
+  })
+  .catch((err) => ("Error occured", err));
 }
