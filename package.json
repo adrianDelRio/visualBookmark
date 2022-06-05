@@ -4,7 +4,7 @@
   "description": "Programa de marcadores visuales para la web.",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon src --ignore 'bookmarks/*.json'",
+    "dev": "nodemon src --ignore 'bookmarks/*'",
     "start": "node src"
   },
   "repository": {

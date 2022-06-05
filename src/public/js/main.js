@@ -41,6 +41,9 @@ async function modBookmark(e) {
       '</div>';
       }
       // Actualizamos los marcadores mostrados
+      numBookmarksLoaded = 0;
+      var show = document.getElementById("showBookmarks");
+      show.innerHTML = '';
       loadBookmarks();
     })
     .catch((err) => ("Error occured", err));
@@ -59,6 +62,7 @@ function loadBookmarks() {
                 "<a href='" + objBookmarks[numBookmarksLoaded].url + "' target='_blank'><image class='bd-placeholder-img card-img-top' width='100%' height='225' id='bookmark' src='../bookmarks/" + objBookmarks[numBookmarksLoaded].image + "'></a>" +
                 "<div class='card-body bg-dark'>" +
                     "<p class='card-text text-white'>" + objBookmarks[numBookmarksLoaded].title + "</p>" +
+                    "<div class='d-flex justify-content-between align-items-center'>" +
                     "<div class='btn-group'>" +
                         "<a href='" + objBookmarks[numBookmarksLoaded].url + "' type='button' class='btn btn-sm btn-light'>Ver</a>" +
                         // TODO: Editar y eliminar
@@ -66,8 +70,9 @@ function loadBookmarks() {
                         "data-bs-bookmark-id='" + numBookmarksLoaded + "' data-bs-bookmark-title='" + objBookmarks[numBookmarksLoaded].title + "' data-bs-bookmark-url='" + objBookmarks[numBookmarksLoaded].url + "'>Editar</button>" +
                         //"<button type='button' class='btn btn-sm btn-danger'>Eliminar</button>" +
                     "</div>" +
-                  "</div>" +
-              "</div>" +
+                  "<i class='card-text text-white'>#" + numBookmarksLoaded + "</i>" +
+                "</div>" +
+            "</div>" +
         "</div>"
         
         numBookmarksLoaded++
@@ -84,19 +89,28 @@ function visualEditOldBookmark(e) {
   const title = button.getAttribute('data-bs-bookmark-title')
   const url = button.getAttribute('data-bs-bookmark-url')
 
+  // Seleccionamos los modals indicados
+  const modalTitle = updateBookmark.querySelector('.modal-title')
+  const modalBookmarkId = updateBookmark.querySelector('.modal-bookmark-id')
+  const modalBookmarkTitle = updateBookmark.querySelector('.modal-bookmark-title')
+  const modalBookmarkUrl = updateBookmark.querySelector('.modal-bookmark-url')
+  const modalBookmarkNewImage = updateBookmark.querySelector('.modal-bookmark-new-image')
+
   // Si es un nuevo bookmark no se muestran los datos antiguos
   // Solo cuando se utiliza el boton de edición existen los atributos
   if (id == null) {
-    return
+    // Mostramos cambios sobre los modals
+    modalTitle.textContent = 'Añadir nuevo marcador'
+    modalBookmarkTitle.value = null
+    modalBookmarkUrl.value = null
+    modalBookmarkId.value = -1
+    modalBookmarkNewImage.textContent = `Seleciona una imagen:`
+  } else {  // Estamos editando un bookmark existente
+    // Mostramos cambios sobre los modals
+    modalTitle.textContent = `Editando Bookmark #${id}`
+    modalBookmarkTitle.value = title
+    modalBookmarkUrl.value = url
+    modalBookmarkId.value = id
+    modalBookmarkNewImage.textContent = `Seleciona una nueva imagen:`
   }
-
-  // Seleccionamos los modals indicados
-  const modalTitle = updateBookmark.querySelector('.modal-title')
-  const modalBookmarkTitle = updateBookmark.querySelector('.modal-bookmark-title')
-  const modalBookmarkUrl = updateBookmark.querySelector('.modal-bookmark-url')
-
-  // Mostramos cambios sobre los modals
-  modalTitle.textContent = `Editando bookmark #${id}`
-  modalBookmarkTitle.value = title
-  modalBookmarkUrl.value = url
 }
