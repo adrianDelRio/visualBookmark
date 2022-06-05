@@ -6,10 +6,12 @@ window.addEventListener('load', loadBookmarks);
 
 async function modBookmark(e) {
     e.preventDefault();
+    const id = document.getElementById("id");
     const title = document.getElementById("title");
     const url = document.getElementById("url");
     const image = document.getElementById("files");
     const formData = new FormData();
+    formData.append("id", id.value);
     formData.append("title", title.value);
     formData.append("url", url.value);
     for(let i = 0; i < files.files.length; i++) {
@@ -35,7 +37,7 @@ async function modBookmark(e) {
         '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
       '</div>';
       }
-      
+      // Actualizamos los marcadores mostrados
       loadBookmarks();
     })
     .catch((err) => ("Error occured", err));
@@ -57,7 +59,7 @@ function loadBookmarks() {
                     "<div class='btn-group'>" +
                         "<a href='" + objBookmarks[numBookmarksLoaded].url + "' type='button' class='btn btn-sm btn-light'>Ver</a>" +
                         // TODO: Editar y eliminar
-                        //"<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#modBookmark' data-bs-bookmark-id='" + numBookmarksLoaded + "'>Editar</button>" +
+                        "<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#modBookmark' data-bs-bookmark-id='" + numBookmarksLoaded + "'>Editar</button>" +
                         //"<button type='button' class='btn btn-sm btn-danger'>Eliminar</button>" +
                     "</div>" +
                   "</div>" +

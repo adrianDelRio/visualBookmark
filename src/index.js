@@ -37,7 +37,7 @@ const multerStorage = multer.diskStorage({
   },
 });
 
-// Filtro para Multer (solo png y jpg)
+// Filtro para Multer
 const multerFilter = (req, file, cb) => {
   const ext = file.mimetype.split("/")[1];
   // JPG es exactamente lo mismo que JPEG pero se utiliza abreviado con estas tres letras
@@ -55,36 +55,76 @@ const upload = multer({
 });
 
 // routes
-// si no se sube ningun archivo multer no guarda nada ni genera excepciones
+// si no se sube ningun archivo multer no se ejecuta
 app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
   /* Prueba datos (objetos) formulario */
   //console.log(req.body);
   //console.log(req.file);
 
-  /* Objetivo */
-  //let prototipo = fs.readFileSync('src/public/bookmarks/prototipo.json');
-  //let jsonPrototipo = JSON.parse(prototipo);
-  //console.log(jsonPrototipo);
-  //console.log(jsonPrototipo["numBookmarks"]);
-
   // Bookmarks se ha construido al realizar la subida del archivo
   var jsonBookmarks = fs.readFileSync(bookmarksFile)
   var objBookmarks = JSON.parse(jsonBookmarks);
-  try {
-    // Se anhade la imagen con su extension al marcador
-    const ext = req.file.mimetype.split("/")[1];
-    req.body["image"] = objBookmarks["numBookmarks"] + "." + ext;
-  } catch (e) {
-    // Se anhade la imagen POR DEFECTO con su extension al marcador
-    req.body["image"] = "default.jpg";
+
+  // Si el marcador NO tiene ID VALIDO no lo aceptamos
+  // -1 es el identificador para los nuevos marcadores
+  // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
+  if (req.body.id == null | req.body.id == '' | req.body.id > objBookmarks["numBookmarks"]) {
+    res.status(400).json({ error: 'El marcador necesita una id valido' });
+    return;
   }
-  // Se anhade el nuevo marcador
-  objBookmarks[objBookmarks["numBookmarks"]] = req.body;
-  objBookmarks["numBookmarks"]++;
+
+  // Si es un nuevo marcador lo anhadimos
+  if (req.body.id == -1) {
+    // El id NO es relevante, asi que lo borramos
+    delete req.body.id;
+    // Guardamos el id para este marcador (segun la pila de marcadores)
+    var id = objBookmarks["numBookmarks"];
+    // Ajustamos el id para el siguiente marcador
+    objBookmarks["numBookmarks"]++;
+
+    // Si el nuevo marcador NO tiene URL no lo aceptamos
+    if (req.body.url == null | req.body.url == '') {
+      res.status(400).json({ error: 'El marcador necesita una url' });
+      return;
+    }
+
+    // Si el nuevo marcador tiene imagen
+    if (req.file != null) {
+      // Se anhade la imagen con su extension al marcador
+      const ext = req.file.mimetype.split("/")[1];
+      req.body["image"] = id + "." + ext;
+    } else {  // Sino tiene imagen
+      // Se anhade la imagen POR DEFECTO al marcador
+      req.body["image"] = "default.jpg";
+    }
+  } else {  // Editamos un marcador existente
+    var id = req.body.id;
+    // No queremos guardar el id dentro del objeto, asi que lo borramos
+    delete req.body.id;
+    // Como estamos editando un marcador, el id para el siguiente marcador ya esta ajustado
+
+    // // Si el marcador editado envia un titulo lo actualizamos
+    // if (req.body.title = null) {
+    //   req.body["titile"] = req.body.titile;
+    // }
+    // // Si el marcador editado envia una url la actualizamos
+    // if (req.body.url != null) {
+    //   req.body["url"] = req.body.url;
+    // }
+    // Si el marcador editado envia una imagen la actualizamos
+    if (req.file != null) {
+      // Se anhade la imagen con su extension al marcador
+      const ext = req.file.mimetype.split("/")[1];
+      req.body["image"] = id + "." + ext;
+    }
+  }
+
+  // Se modifica el marcador
+  objBookmarks[id] = req.body;
   var newBookmarks = JSON.stringify(objBookmarks, null, 2);
   fs.writeFileSync('src/public/bookmarks/bookmarks.json', newBookmarks);
 
-  res.json({ message: "Successfully uploaded files" });
+  res.json({ message: "Marcador enviado satisfactoriamente" });
 });
 
 // static files
