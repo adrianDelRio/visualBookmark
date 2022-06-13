@@ -1,5 +1,5 @@
 # visualBookmark
-visualBookmark es un programa de marcadores visuales para la web.
+Programa de marcadores visuales para la web.
 
 ### Instalación
 
