@@ -124,8 +124,12 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
       req.body["image"] = "default.jpg";
     }
 
-    // Se anhade el marcador
-    objBookmarks[id] = req.body;
+      // Se anhade el marcador solo con nuestro titulo, url e imagen
+      // (independientemente del resto de datos de la petición)
+      objBookmarks[id] = {};
+      objBookmarks[id].title = req.body.title;
+      objBookmarks[id].url = req.body.url;
+      objBookmarks[id].image = req.body.image;
   } else {  // Editamos un marcador existente
     // El identificador ya esta seleccionado por el usuario
 
