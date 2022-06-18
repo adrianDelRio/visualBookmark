@@ -64,25 +64,29 @@ function loadBookmarks() {
    })
   .then(objBookmarks => {
       var show = document.getElementById("showBookmarks");
+      var possibleId = 0;
       while (numBookmarksLoaded < objBookmarks["numBookmarks"]) {
-        show.innerHTML += "<div class='col'>" +
-            "<div class='card shadow-sm p-1 bg-secondary'>" +
-                "<a href='" + objBookmarks[numBookmarksLoaded].url + "' target='_blank'><image class='bd-placeholder-img card-img-top' width='100%' height='225' id='bookmark' src='../bookmarks/" + objBookmarks[numBookmarksLoaded].image + "'></a>" +
-                "<div class='card-body bg-dark'>" +
-                    "<p class='card-text text-white'>" + objBookmarks[numBookmarksLoaded].title + "</p>" +
-                    "<div class='d-flex justify-content-between align-items-center'>" +
-                    "<div class='btn-group'>" +
-                        "<a href='" + objBookmarks[numBookmarksLoaded].url + "' type='button' class='btn btn-sm btn-light'>Ver</a>" +
-                        "<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#modBookmark' " +
-                        "data-bs-bookmark-id='" + numBookmarksLoaded + "' data-bs-bookmark-title='" + objBookmarks[numBookmarksLoaded].title + "' data-bs-bookmark-url='" + objBookmarks[numBookmarksLoaded].url + "'>Editar</button>" +
-                        "<button type='button' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#removeBookmark' data-bs-bookmark-id='" + numBookmarksLoaded + "'>Eliminar</button>" +
-                    "</div>" +
-                  "<i class='card-text text-white'>#" + numBookmarksLoaded + "</i>" +
-                "</div>" +
-            "</div>" +
-        "</div>"
+        if (objBookmarks[possibleId] != undefined) {
+          show.innerHTML += "<div class='col'>" +
+              "<div class='card shadow-sm p-1 bg-secondary'>" +
+                  "<a href='" + objBookmarks[possibleId].url + "' target='_blank'><image class='bd-placeholder-img card-img-top' width='100%' height='225' id='bookmark' src='../bookmarks/" + objBookmarks[possibleId].image + "'></a>" +
+                  "<div class='card-body bg-dark'>" +
+                      "<p class='card-text text-white'>" + objBookmarks[possibleId].title + "</p>" +
+                      "<div class='d-flex justify-content-between align-items-center'>" +
+                      "<div class='btn-group'>" +
+                          "<a href='" + objBookmarks[possibleId].url + "' type='button' class='btn btn-sm btn-light'>Ver</a>" +
+                          "<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#modBookmark' " +
+                          "data-bs-bookmark-id='" + possibleId + "' data-bs-bookmark-title='" + objBookmarks[possibleId].title + "' data-bs-bookmark-url='" + objBookmarks[possibleId].url + "'>Editar</button>" +
+                          "<button type='button' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#removeBookmark' data-bs-bookmark-id='" + possibleId + "'>Eliminar</button>" +
+                      "</div>" +
+                    "<i class='card-text text-white'>#" + possibleId + "</i>" +
+                  "</div>" +
+              "</div>" +
+          "</div>"
         
-        numBookmarksLoaded++
+        numBookmarksLoaded++;
+        }
+      possibleId++;
       }
   })
   .catch((err) => ("Error occured", err));
