@@ -13,6 +13,9 @@ deleteBookmark.addEventListener('show.bs.modal', visualRemoveBookmark);
 const upDeletedBookmark = document.getElementById('removeBookmark')
 upDeletedBookmark.addEventListener('submit', removeBookmark);
 
+const sendToBookmarkId = document.getElementById('sendToBookmarkId')
+sendToBookmarkId.addEventListener("submit", searchBookmark);
+
 async function modBookmark(e) {
     e.preventDefault();
     const id = document.getElementById("id");
@@ -67,7 +70,7 @@ function loadBookmarks() {
       var possibleId = 0;
       while (numBookmarksLoaded < objBookmarks["numBookmarks"]) {
         if (objBookmarks[possibleId] != undefined) {
-          show.innerHTML += "<div class='col'>" +
+          show.innerHTML += "<div class='col' id='" + numBookmarksLoaded + "'>" +
               "<div class='card shadow-sm p-1 bg-secondary'>" +
                   "<a href='" + objBookmarks[possibleId].url + "' target='_blank'><image class='bd-placeholder-img card-img-top' width='100%' height='225' id='bookmark' src='../bookmarks/" + objBookmarks[possibleId].image + "'></a>" +
                   "<div class='card-body bg-dark'>" +
@@ -79,7 +82,7 @@ function loadBookmarks() {
                           "data-bs-bookmark-id='" + possibleId + "' data-bs-bookmark-title='" + objBookmarks[possibleId].title + "' data-bs-bookmark-url='" + objBookmarks[possibleId].url + "'>Editar</button>" +
                           "<button type='button' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#removeBookmark' data-bs-bookmark-id='" + possibleId + "'>Eliminar</button>" +
                       "</div>" +
-                    "<i class='card-text text-white'>#" + possibleId + "</i>" +
+                    "<i class='card-text text-white'>#" + numBookmarksLoaded + "</i>" +
                   "</div>" +
               "</div>" +
           "</div>"
@@ -178,4 +181,20 @@ async function removeBookmark(e) {
     loadBookmarks();
   })
   .catch((err) => ("Error occured", err));
+}
+
+function searchBookmark(e) {  // Escuchar cuando se envíe el formulario
+  e.preventDefault(); // Prevenimos que se envie
+  // Comprobamos que es un id valido
+  const id = sendToBookmarkId.querySelector("[name=q]").value;
+  if (id == '' || id == null || id < 0 || id > numBookmarksLoaded-1 || isNaN(id)) {
+    var response = document.getElementById("modBookmark-response");
+    response.innerHTML +=
+    '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
+      '<b>¡Error!</b> El ID <i>"' + id + '"</i> no es válido' +
+      '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+    '</div>';
+    return;
+  }
+  location.href = "#" + sendToBookmarkId.querySelector("[name=q]").value;
 }
