@@ -23,12 +23,14 @@ const multerStorage = multer.diskStorage({
   },
   filename: (req, file, cb) => {
 
-    // Si el archivo de datos no existe
-    // se inicializa con nuestra configuracion
-    if (!fs.existsSync(bookmarksFile)) {
+    // Si no existe la carpeta bookmarks se crea
+    // y se inicializa con nuestra configuración
+    if (!fs.existsSync('src/public/bookmarks') || !fs.existsSync(bookmarksFile)) {
+      fs.mkdirSync('src/public/bookmarks');
       var newNumBookmarks = '{ "numBookmarks": 0, "numMaxId": 0 }';
       fs.writeFileSync(bookmarksFile, newNumBookmarks);
     }
+
     // Leemos el archivo de datos
     var jsonBookmarks = fs.readFileSync(bookmarksFile)
     var objBookmarks = JSON.parse(jsonBookmarks);
@@ -121,7 +123,7 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
       req.body["image"] = id + "." + ext;
     } else {  // Sino tiene imagen
       // Se anhade la imagen POR DEFECTO al marcador
-      req.body["image"] = "default.jpg";
+      req.body["image"] = "../img/default.jpg";
     }
 
       // Se anhade el marcador solo con nuestro titulo, url e imagen

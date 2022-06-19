@@ -3,32 +3,29 @@ Programa de marcadores visuales para la web.
 
 ### Instalación
 
-Clonar el repositorio
+Clonaremos el repositorio
 
 ```
 git clone https://github.com/adrianDelRio/visualBookmark.git
 ```
 
-Nos movemos al directorio creado
+Nos moveremos al directorio creado
 
 ```
 cd visualBookmark
 ```
 
-Instalamos dependendcias
+Instalaremos las dependendcias
 
 ```
 npm install
 ```
 
-*Importante*: Renombramos la carpeta "defaultData" por "bookmarks" antes de ejecutar el programa para ajustar los arhivos de configuracion del mismo
-
-```
-mv src/public/defaultData/ src/public/bookmarks/
-```
-
-Finalmente ejecutamos el proyecto
+Finalmente ejecutaremos el proyecto como desarrrollador **o** usuario
 
 ```
 npm run dev
+```
+```
+npm run start
 ```
