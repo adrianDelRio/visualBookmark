@@ -176,8 +176,10 @@ app.post("/delete_bookmark", async (req, res) => {
     return;
   }
 
-  // Eliminamos la imagen
-  fs.unlinkSync("./src/public/bookmarks/" + objBookmarks[id].image);
+  // Eliminamos la imagen si no es la imagen por defecto
+  if (objBookmarks[id].image != "../img/default.jpg") {
+    fs.unlinkSync('src/public/bookmarks/' + objBookmarks[id].image);
+  }
   // Eliminamos el marcador
   delete objBookmarks[id];
   // Ajustamos el numero de marcadores
