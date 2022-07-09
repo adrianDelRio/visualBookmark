@@ -1,6 +1,8 @@
 const submitedBookmark = document.getElementById("modBookmark");
 submitedBookmark.addEventListener("submit", modBookmark);
 
+var bookmarks;
+var duplicates = [];
 var numBookmarksLoaded = 0;
 window.addEventListener('load', loadBookmarks);
 
@@ -15,6 +17,10 @@ upDeletedBookmark.addEventListener('submit', removeBookmark);
 
 const sendToBookmarkId = document.getElementById('sendToBookmarkId')
 sendToBookmarkId.addEventListener("submit", searchBookmark);
+
+// Escuchar pulsar boton contenido duplicado
+const duplicateBookmark = document.getElementById('duplicateBookmark')
+duplicateBookmark.addEventListener('show.bs.modal', visualDuplicateBookmark);
 
 async function modBookmark(e) {
     e.preventDefault();
@@ -57,10 +63,12 @@ async function modBookmark(e) {
       show.innerHTML = '';
       loadBookmarks();
     })
-    .catch((err) => ("Error occured", err));
+    .catch((err) => (console.log(err)));
 }
 
 function loadBookmarks() {
+  // Recargamos los duplicados por si se han modificado
+  duplicates = [];
   fetch("../bookmarks/bookmarks.json")
   .then(response => {
       return response.json();
@@ -70,6 +78,8 @@ function loadBookmarks() {
       var possibleId = 0;
       while (numBookmarksLoaded < objBookmarks["numBookmarks"]) {
         if (objBookmarks[possibleId] != undefined) {
+          // Guardamos el idEmbellecido en el marcador
+          objBookmarks[possibleId].idEmbellecido = numBookmarksLoaded;
           show.innerHTML += "<div class='col' id='" + numBookmarksLoaded + "'>" +
               "<div class='card shadow-sm p-1 bg-secondary'>" +
                   "<a href='" + objBookmarks[possibleId].url + "' target='_blank'><image class='bd-placeholder-img card-img-top' width='100%' height='225' id='bookmark' src='../bookmarks/" + objBookmarks[possibleId].image + "'></a>" +
@@ -87,12 +97,14 @@ function loadBookmarks() {
               "</div>" +
           "</div>"
         
-        numBookmarksLoaded++;
+          numBookmarksLoaded++;
         }
-      possibleId++;
+        possibleId++;
       }
+      // Almacenamos los bookmarks con idEmbellecido
+      bookmarks = objBookmarks;
   })
-  .catch((err) => ("Error occured", err));
+  .catch((err) => (console.log(err)));
 }
 
 // Para pasar los datos antiguos del marcador al editarlo
@@ -180,7 +192,7 @@ async function removeBookmark(e) {
     show.innerHTML = '';
     loadBookmarks();
   })
-  .catch((err) => ("Error occured", err));
+  .catch((err) => (console.log(err)));
 }
 
 function searchBookmark(e) {  // Escuchar cuando se envíe el formulario
@@ -197,4 +209,57 @@ function searchBookmark(e) {  // Escuchar cuando se envíe el formulario
     return;
   }
   location.href = "#" + sendToBookmarkId.querySelector("[name=q]").value;
+}
+
+// Para buscar y mostrar los marcadores duplicados
+function visualDuplicateBookmark() {
+  // Seleccionamos los modals indicados
+  const modalBody = duplicateBookmark.querySelector('.modal-body');
+
+  // Encuentra elementos duplicados buscando por url y los almacena
+  // en una variable de duplicados para su uso posterior (se actualizan
+  // si los marcadores son modificados)
+  if (duplicates.length == 0) {
+    for (var i = 0; i < bookmarks["numMaxId"]; i++) {
+      var iDuplicates = [];
+      if (bookmarks[i] != undefined) {
+        for (var j = 0; j < bookmarks["numMaxId"]; j++) {
+          // Si los marcadores existen y son duplicados
+          if (bookmarks[j] != undefined) {
+            if ((i != j) && (bookmarks[i].url == bookmarks[j].url) && 
+              ((bookmarks[i].shown == undefined) && (bookmarks[j].shown == undefined))) {
+              iDuplicates.push(bookmarks[j]);
+              // Marcamos los marcadores duplicados
+              // para no volverlos a mostrar
+              bookmarks[j].shown = true;
+            }
+          }
+        }
+        // No tenemos en cuenta que un marcador sea duplicado de si mismo,
+        // pero si lo intergramos al mostrar los duplicados
+        if (iDuplicates.length > 0) {
+          iDuplicates.push(bookmarks[i]);
+          duplicates.push(iDuplicates);
+        }
+      }
+    }
+  }
+  
+  // Muestra los marcadores duplicados
+  modalBody.innerHTML = '';
+  if (duplicates.length == 0) {
+    modalBody.innerHTML += 
+    '<p>¡<b>Woow</b>, parece que no tienes ningun bookmark duplicado!</p>';
+  } else {
+    modalBody.innerHTML += 
+    '<p>Hemos encontrado los siguientes duplicados:</p>';
+    for (var i = 0; i < duplicates.length; i++) {
+      modalBody.innerHTML += '<p>';
+      for (var j = 0; j < duplicates[i].length; j++) {
+        modalBody.innerHTML += 
+        '<a><b>#' + duplicates[i][j].idEmbellecido + '</b>: Título: "' + duplicates[i][j].title + '" & URL: "' + duplicates[i][j].url + '"<br></a>';
+      }
+      modalBody.innerHTML += '</p>';
+    }
+  }
 }
