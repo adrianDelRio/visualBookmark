@@ -18,7 +18,6 @@ upDeletedBookmark.addEventListener('submit', removeBookmark);
 const sendToBookmarkId = document.getElementById('sendToBookmarkId')
 sendToBookmarkId.addEventListener("submit", searchBookmark);
 
-// Escuchar pulsar boton contenido duplicado
 const duplicateBookmark = document.getElementById('duplicateBookmark')
 duplicateBookmark.addEventListener('show.bs.modal', visualDuplicateBookmark);
 
@@ -32,7 +31,7 @@ async function modBookmark(e) {
     formData.append("id", id.value);
     formData.append("title", title.value);
     formData.append("url", url.value);
-    for(let i = 0; i < files.files.length; i++) {
+    for (let i = 0; i < files.files.length; i++) {
       formData.append("files", files.files[0]);
     }
     await fetch("http://127.0.0.1:3000/upload_bookmark", {
@@ -78,6 +77,8 @@ function loadBookmarks() {
       var possibleId = 0;
       while (numBookmarksLoaded < objBookmarks["numBookmarks"]) {
         if (objBookmarks[possibleId] != undefined) {
+          // Guardamos el id en el marcador
+          objBookmarks[possibleId].id = possibleId;
           // Guardamos el idEmbellecido en el marcador
           objBookmarks[possibleId].idEmbellecido = numBookmarksLoaded;
           show.innerHTML += "<div class='col' id='" + numBookmarksLoaded + "'>" +
@@ -87,7 +88,7 @@ function loadBookmarks() {
                       "<p class='card-text text-white'>" + objBookmarks[possibleId].title + "</p>" +
                       "<div class='d-flex justify-content-between align-items-center'>" +
                       "<div class='btn-group'>" +
-                          "<a href='" + objBookmarks[possibleId].url + "' type='button' class='btn btn-sm btn-light'>Ver</a>" +
+                          "<a href='" + objBookmarks[possibleId].url + "' target='_blank' type='button' class='btn btn-sm btn-light'>Ver</a>" +
                           "<button type='button' class='btn btn-sm btn-secondary' data-bs-toggle='modal' data-bs-target='#modBookmark' " +
                           "data-bs-bookmark-id='" + possibleId + "' data-bs-bookmark-title='" + objBookmarks[possibleId].title + "' data-bs-bookmark-url='" + objBookmarks[possibleId].url + "'>Editar</button>" +
                           "<button type='button' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#removeBookmark' data-bs-bookmark-id='" + possibleId + "'>Eliminar</button>" +
@@ -111,7 +112,7 @@ function loadBookmarks() {
 function visualEditOldBookmark(e) {
   const button = e.relatedTarget
   // Obtengo la información de los atributos data-bs-*
-  const id = button.getAttribute('data-bs-bookmark-id')
+  const idReal = button.getAttribute('data-bs-bookmark-id')
   const title = button.getAttribute('data-bs-bookmark-title')
   const url = button.getAttribute('data-bs-bookmark-url')
 
@@ -124,7 +125,7 @@ function visualEditOldBookmark(e) {
 
   // Si es un nuevo bookmark no se muestran los datos antiguos
   // Solo cuando se utiliza el boton de edición existen los atributos
-  if (id == null) {
+  if (idReal == null) {
     // Mostramos cambios sobre los modals
     modalTitle.textContent = 'Añadir nuevo marcador'
     modalBookmarkTitle.value = null
@@ -133,10 +134,10 @@ function visualEditOldBookmark(e) {
     modalBookmarkNewImage.textContent = `Seleciona una imagen:`
   } else {  // Estamos editando un bookmark existente
     // Mostramos cambios sobre los modals
-    modalTitle.textContent = `Editando Bookmark #${id}`
+    modalTitle.textContent = `Editando Bookmark #${bookmarks[idReal].idEmbellecido}`
     modalBookmarkTitle.value = title
     modalBookmarkUrl.value = url
-    modalBookmarkId.value = id
+    modalBookmarkId.value = idReal
     modalBookmarkNewImage.textContent = `Seleciona una nueva imagen:`
   }
 }
@@ -145,7 +146,7 @@ function visualEditOldBookmark(e) {
 function visualRemoveBookmark(e) {
   const button = e.relatedTarget
   // Obtengo la información de los atributos data-bs-*
-  const id = button.getAttribute('data-bs-bookmark-id')
+  const idReal = button.getAttribute('data-bs-bookmark-id')
 
   // Seleccionamos los modals indicados
   const modalTitle = deleteBookmark.querySelector('.modal-title')
@@ -153,9 +154,9 @@ function visualRemoveBookmark(e) {
   const modalBookmarkId = updateBookmark.querySelector('.modal-bookmark-id')
 
   // Mostramos cambios sobre los modals
-  modalTitle.textContent = `Eliminar Bookmark #${id}`
-  modalBody.textContent = `¿Seguro que quieres eliminar el Bookmark #${id}?`
-  modalBookmarkId.value = id
+  modalTitle.textContent = `Eliminar Bookmark #${bookmarks[idReal].idEmbellecido}`
+  modalBody.textContent = `¿Seguro que quieres eliminar el Bookmark #${bookmarks[idReal].idEmbellecido}?`
+  modalBookmarkId.value = idReal
 }
 
 async function removeBookmark(e) {
@@ -227,7 +228,11 @@ function visualDuplicateBookmark() {
           // Si los marcadores existen y son duplicados
           if (bookmarks[j] != undefined) {
             if ((i != j) && (bookmarks[i].url == bookmarks[j].url) && 
-              ((bookmarks[i].shown == undefined) && (bookmarks[j].shown == undefined))) {
+                ((bookmarks[i].shown == undefined) && (bookmarks[j].shown == undefined))) {
+              // Si es el primero se integra el marcador del que es duplicado
+              if (iDuplicates.length == 0) {
+                iDuplicates.push(bookmarks[i]);
+              }
               iDuplicates.push(bookmarks[j]);
               // Marcamos los marcadores duplicados
               // para no volverlos a mostrar
@@ -235,10 +240,8 @@ function visualDuplicateBookmark() {
             }
           }
         }
-        // No tenemos en cuenta que un marcador sea duplicado de si mismo,
-        // pero si lo intergramos al mostrar los duplicados
+        // Solo anhadimos duplicados al array si hay alguno
         if (iDuplicates.length > 0) {
-          iDuplicates.push(bookmarks[i]);
           duplicates.push(iDuplicates);
         }
       }
@@ -251,15 +254,26 @@ function visualDuplicateBookmark() {
     modalBody.innerHTML += 
     '<p>¡<b>Woow</b>, parece que no tienes ningun bookmark duplicado!</p>';
   } else {
-    modalBody.innerHTML += 
-    '<p>Hemos encontrado los siguientes duplicados:</p>';
+    var msgDuplicates = '';
+    msgDuplicates += 
+    '<p>Hemos encontrado los siguientes duplicados, selecciona el que quieras <b>eliminar</b>:</p>';
     for (var i = 0; i < duplicates.length; i++) {
-      modalBody.innerHTML += '<p>';
+      msgDuplicates += '<div class="list-group w-auto shadow-sm p-1 bg-secondary">';
       for (var j = 0; j < duplicates[i].length; j++) {
-        modalBody.innerHTML += 
-        '<a><b>#' + duplicates[i][j].idEmbellecido + '</b>: Título: "' + duplicates[i][j].title + '" & URL: "' + duplicates[i][j].url + '"<br></a>';
+        msgDuplicates +=
+          '<a href="#" class="list-group-item list-group-item-action d-flex gap-2 py-1 bg-dark" aria-current="true" data-bs-toggle="modal" data-bs-target="#removeBookmark" data-bs-bookmark-id="' + duplicates[i][j].id + '">' +
+            '<img src="bookmarks/' + duplicates[i][j].image + '" alt="twbs" width="40" height="40" class="rounded-circle flex-shrink-0">' +
+              '<div class="d-flex gap-2 w-100 justify-content-between">' +
+                '<div>' +
+                  '<h6 class="mb-0 text-white">' + duplicates[i][j].title + '</h6>' +
+                  '<p class="mb-0 text-white opacity-75">' + duplicates[i][j].url + '</p>' +
+                '</div>' +
+                '<p class="opacity-50 text-white text-nowrap">#' + duplicates[i][j].idEmbellecido + '</p>' +
+              '</div>' +
+          '</a>';
       }
-      modalBody.innerHTML += '</p>';
+      msgDuplicates += '</div></br>';
+      modalBody.innerHTML = msgDuplicates;
     }
   }
 }
