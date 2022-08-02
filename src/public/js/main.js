@@ -4,7 +4,7 @@ submitedBookmark.addEventListener("submit", modBookmark);
 var bookmarks;
 var duplicates = [];
 var numBookmarksLoaded = 0;
-var ip = "192.168.1.20";
+var ip = window.location.hostname;
 window.addEventListener('load', loadBookmarks);
 
 const updateBookmark = document.getElementById('modBookmark')
@@ -44,10 +44,10 @@ async function modBookmark(e) {
       var response = document.getElementById("modBookmark-response");
       if (res.status == 200) {
         response.innerHTML += 
-      '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
-        '¡La <b>modificación</b> se ha realizado correctamente!' +
-        '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
-      '</div>';
+        '<div class="alert alert-success alert-dismissible fade show" role="alert">' +
+          '¡La <b>modificación</b> se ha realizado correctamente!' +
+          '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
+        '</div>';
       } else {
         response.innerHTML += 
       '<div class="alert alert-warning alert-dismissible fade show" role="alert">' +
@@ -55,6 +55,7 @@ async function modBookmark(e) {
         '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
       '</div>';
       }
+      setTimeout(function() { response.innerHTML = ""; }, 5000);
       // Actualizamos los marcadores mostrados
       // cuando se edita un marcador puede estar en cualquier posicion,
       // por lo que se recargan los marcadores en su totalidad
@@ -163,7 +164,7 @@ function visualRemoveBookmark(e) {
 async function removeBookmark(e) {
   e.preventDefault();
   const id = document.getElementById("id");
-  await fetch("http://127.0.0.1:3000/delete_bookmark", {
+  await fetch("http://" + ip + ":3000/delete_bookmark", {
       method: 'POST',
       body: 'id=' + id.value,
       headers: {
@@ -186,6 +187,7 @@ async function removeBookmark(e) {
       '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
     '</div>';
     }
+    setTimeout(function() { response.innerHTML = ""; }, 5000);
     // Actualizamos los marcadores mostrados
     // cuando se elimina un marcador puede estar en cualquier posicion,
     // por lo que se recargan los marcadores en su totalidad
@@ -208,6 +210,7 @@ function searchBookmark(e) {  // Escuchar cuando se envíe el formulario
       '<b>¡Error!</b> El ID <i>"' + id + '"</i> no es válido' +
       '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>' +
     '</div>';
+    setTimeout(function() { response.innerHTML = ""; }, 5000);
     return;
   }
   location.href = "#" + sendToBookmarkId.querySelector("[name=q]").value;
