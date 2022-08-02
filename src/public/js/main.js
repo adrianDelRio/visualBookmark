@@ -4,6 +4,7 @@ submitedBookmark.addEventListener("submit", modBookmark);
 var bookmarks;
 var duplicates = [];
 var numBookmarksLoaded = 0;
+var ip = "192.168.1.20";
 window.addEventListener('load', loadBookmarks);
 
 const updateBookmark = document.getElementById('modBookmark')
@@ -34,7 +35,7 @@ async function modBookmark(e) {
     for (let i = 0; i < files.files.length; i++) {
       formData.append("files", files.files[0]);
     }
-    await fetch("http://127.0.0.1:3000/upload_bookmark", {
+    await fetch("http://" + ip + ":3000/upload_bookmark", {
         method: 'POST',
         body: formData,
     })
