@@ -9,7 +9,9 @@ const fs = require('fs');
 
 // settings and constants
 app.set("port", 3000);
+const bookmarksDir = 'src/public/bookmarks'
 const bookmarksFile = 'src/public/bookmarks/bookmarks.json'
+
 
 // middleware
 app.use(express.json());
@@ -25,8 +27,8 @@ const multerStorage = multer.diskStorage({
 
     // Si no existe la carpeta bookmarks se crea
     // y se inicializa con nuestra configuración
-    if (!fs.existsSync('src/public/bookmarks') || !fs.existsSync(bookmarksFile)) {
-      fs.mkdirSync('src/public/bookmarks');
+    if (!fs.existsSync(bookmarksDir) || !fs.existsSync(bookmarksFile)) {
+      fs.mkdirSync(bookmarksDir);
       var newNumBookmarks = '{ "numBookmarks": 0, "numMaxId": 0 }';
       fs.writeFileSync(bookmarksFile, newNumBookmarks);
     }
@@ -38,7 +40,7 @@ const multerStorage = multer.diskStorage({
     // Si el marcador NO tiene ID VALIDO no lo aceptamos
     // -1 es el identificador para los nuevos marcadores
     // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
-    var id = req.body.id;
+    var id = parseInt(req.body.id);
     if (id == null | id == '' | id > objBookmarks["numMaxId"] | id < -1) {
       cb(new Error("El marcador necesita un id valido"), false);
     }
@@ -52,7 +54,7 @@ const multerStorage = multer.diskStorage({
 
       // Eliminamos la antigua imagen (ya que solo
       // se entra a este metodo si hay una nueva imagen)
-      fs.unlinkSync("./src/public/bookmarks/" + objBookmarks[id].image);
+      fs.unlinkSync("./" + bookmarksDir + "/" + objBookmarks[id].image);
     }
 
     // Guardamos nueva la imagen
@@ -93,11 +95,16 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
   // Si el marcador NO tiene ID VALIDO no lo aceptamos
   // -1 es el identificador para los nuevos marcadores
   // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
-  var id = req.body.id;
+
+  var id = parseInt(req.body.id);
   if (id == null | id == '' | id > objBookmarks["numMaxId"] | id < -1) {
     res.status(400).json({ error: 'El marcador necesita un id valido' });
     return;
   }
+
+  // Parse url to string
+  var title = req.body.title.toString();
+  var url = req.body.url.toString();
 
   // Si es un nuevo marcador lo anhadimos
   if (id == -1) {
@@ -111,7 +118,7 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
     objBookmarks["numBookmarks"]++;
 
     // Si el nuevo marcador NO tiene URL no lo aceptamos
-    if (req.body.url == null | req.body.url == '') {
+    if (url == null | url == '') {
       res.status(400).json({ error: 'El marcador necesita una url' });
       return;
     }
@@ -129,8 +136,8 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
       // Se anhade el marcador solo con nuestro titulo, url e imagen
       // (independientemente del resto de datos de la petición)
       objBookmarks[id] = {};
-      objBookmarks[id].title = req.body.title;
-      objBookmarks[id].url = req.body.url;
+      objBookmarks[id].title = title;
+      objBookmarks[id].url = url;
       objBookmarks[id].image = req.body.image;
   } else {  // Editamos un marcador existente
     // El identificador ya esta seleccionado por el usuario
@@ -140,12 +147,12 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
     // Como estamos editando un marcador, el id para el siguiente marcador ya esta ajustado
 
     // Si el marcador editado envia un titulo lo actualizamos
-    if (req.body.title != null) {
-      objBookmarks[id].title = req.body.title;
+    if (title != null) {
+      objBookmarks[id].title = title;
     }
     // Si el marcador editado envia una url la actualizamos
-    if (req.body.url != null) {
-      objBookmarks[id].url = req.body.url;
+    if (url != null) {
+      objBookmarks[id].url = url;
     }
     // Si el marcador editado envia una imagen la actualizamos
     if (req.file != null) {
@@ -170,7 +177,7 @@ app.post("/delete_bookmark", async (req, res) => {
   // Si el marcador NO tiene ID VALIDO no lo aceptamos
   // -1 es el identificador para los nuevos marcadores
   // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
-  var id = req.body.id;
+  var id = parseInt(req.body.id);
   if (id == null | id == '' | id > objBookmarks["numMaxId"] | id < -1) {
     res.status(400).json({ error: 'El marcador necesita un id valido' });
     return;
