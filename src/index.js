@@ -5,7 +5,7 @@ const app = express();
 const path = require("path");
 const multer = require("multer");
 const fs = require('fs');
-
+const entities = require("html-entities");
 
 // settings and constants
 app.set("port", 3000);
@@ -41,6 +41,7 @@ const multerStorage = multer.diskStorage({
     // -1 es el identificador para los nuevos marcadores
     // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
     var id = parseInt(req.body.id);
+    id = entities.encode(id);
     if (id == null | id == '' | id > objBookmarks["numMaxId"] | id < -1) {
       cb(new Error("El marcador necesita un id valido"), false);
     }
@@ -97,6 +98,7 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
   // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
 
   var id = parseInt(req.body.id);
+  id = entities.encode(id);
   if (id == null | id == '' | id > objBookmarks["numMaxId"] | id < -1) {
     res.status(400).json({ error: 'El marcador necesita un id valido' });
     return;
@@ -104,7 +106,9 @@ app.post("/upload_bookmark", upload.single("files"), async (req, res) => {
 
   // Parse url to string
   var title = req.body.title.toString();
+  title = entities.encode(title);
   var url = req.body.url.toString();
+  url = entities.encode(url);
 
   // Si es un nuevo marcador lo anhadimos
   if (id == -1) {
@@ -178,6 +182,7 @@ app.post("/delete_bookmark", async (req, res) => {
   // -1 es el identificador para los nuevos marcadores
   // Los nuevos marcadores se almacenan como en una pila (seguidos del anterior)
   var id = parseInt(req.body.id);
+  id = entities.encode(id);
   if (id == null | id == '' | id > objBookmarks["numMaxId"] | id < -1) {
     res.status(400).json({ error: 'El marcador necesita un id valido' });
     return;
