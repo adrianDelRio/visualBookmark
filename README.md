@@ -1,6 +1,6 @@
 # Visual Bookmark
 
-> **:warning: Aviso de EOL**: Este proyecto se creó en 2022 (refactorizado en 2024) con el objetivo de aprender sobre las tecnologías empleadas en su desarrollo. Actualmente, se considera finalizado. Sin embargo, se ha decidido liberar el código por si a alguien le es de utilidad. :blue_heart:
+> **:warning: Aviso de EOL :warning:**: Este proyecto se creó en 2022 (refactorizado en 2024) con el objetivo de aprender sobre las tecnologías empleadas en su desarrollo. Actualmente, se considera finalizado. Sin embargo, se ha decidido liberar el código por si a alguien le es de utilidad. :blue_heart:
 
 Visual Bookmark es una aplicación para la gestión visual de marcadores. Este proyecto es una herramienta **databaseless** que permite organizar y administrar los marcadores de manera intuitiva.
 
@@ -10,11 +10,13 @@ Visual Bookmark es una aplicación para la gestión visual de marcadores. Este p
   - **HTML**
   - **CSS**
   - **JavaScript**
-    + Con la ayuda de librerías **Bootstrap** para mejorar el diseño y la funcionalidad.
+
+> El *CSS* y *JS* se integró con **Bootstrap**, para mejorar el diseño y la funcionalidad.
+
 - **Back-end**: 
   - **Node.js**
   - **Express**
-  - **Multer**: Middleware para el manejo de archivos.
+  - **Middleware Multer**
 - **Persistencia**: 
   - **Archivo JSON**
 
@@ -27,7 +29,7 @@ Cabe mencionar que algunas decisiones de desarrollo se tomaron para explorar las
 
 Además, en cuanto a la mantenibilidad y posible uso, es importante mencionar que, dada la naturaleza del proyecto:
 - La única documentación generada ha sido este documento y los comentarios del código.
-- Las pruebas realizadas han sido todas "ad hoc", sin que se hayan realizado pruebas automatizadas.
+- Las pruebas realizadas han sido todas "ad-hoc", sin que se hayan realizado pruebas automatizadas.
 - Algunas de las imprementaciones realizadas necesitan una refactorización para mejorar el rendimiento.
 
 ## Instalación
