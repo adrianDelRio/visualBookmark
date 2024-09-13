@@ -1,6 +1,6 @@
 # Visual Bookmark
 
-> **Aviso de EOL :warning:**: Este proyecto se creó en 2022 (refactorizado en 2024) con el objetivo de aprender sobre las tecnologías empleadas en su desarrollo. Actualmente, se considera finalizado. Sin embargo, se ha decidido liberar el código por si a alguien le es de utilidad. :blue_heart:
+> **:warning: Aviso de EOL**: Este proyecto se creó en 2022 (refactorizado en 2024) con el objetivo de aprender sobre las tecnologías empleadas en su desarrollo. Actualmente, se considera finalizado. Sin embargo, se ha decidido liberar el código por si a alguien le es de utilidad. :blue_heart:
 
 Visual Bookmark es una aplicación para la gestión visual de marcadores. Este proyecto es una herramienta **databaseless** que permite organizar y administrar los marcadores de manera intuitiva.
 
