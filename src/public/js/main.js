@@ -210,12 +210,12 @@ function searchBookmark(e) {
         setTimeout(() => { modResponse.innerHTML = ""; }, 3000);
     } else {
         const element = document.getElementById(id);
+        const originalClasses = element.className;
         element.classList.remove('p-1', 'bg-secondary');
         element.classList.add('bg-warning');
         element.scrollIntoView();
         setTimeout(() => {
-            element.classList.remove('bg-warning');
-            element.classList.add('p-1', 'bg-secondary');
+            element.className = originalClasses;
         }, 5000);
     }
 }
